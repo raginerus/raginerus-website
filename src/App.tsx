@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
 
 export default function RaginerusLandingPage() {
   const [formData, setFormData] = useState({
@@ -35,21 +34,25 @@ export default function RaginerusLandingPage() {
 
     ensureMeta(
       "description",
-      "Raginerus ist eine Serviceplattform für den strukturierten Datenaustausch zwischen Telefonmarketing-Unternehmen und Auftraggebern."
+      "Raginerus ist eine Serviceplattform für den strukturierten Datenaustausch von Leads und Abschlüssen zwischen Telefonmarketing-Unternehmen und Auftraggebern. Die Plattform ermöglicht die automatisierte Übertragung, Transformation und Rückmeldung von Daten in beide Richtungen."
     );
     ensureMeta(
       "keywords",
-      "Telefonmarketing Datentransfer, Lead und Abschluss Datenaustausch Plattform, Leads und Abschlüsse übertragen, Telefonmarketing Leads und Abschlüsse übergeben, Lead Rückmeldungen System, Abschluss Rückmeldungen System, Datendrehscheibe Telefonmarketing, Lead und Abschluss Schnittstelle CRM"
+      "Telefonmarketing Datentransfer, Lead Datenaustausch, Abschluss Datenaustausch, Leads übertragen, Abschlüsse übertragen, Lead Rückmeldungen System, Abschluss Rückmeldungen System, Datendrehscheibe Telefonmarketing, Lead Schnittstelle CRM, Abschluss Schnittstelle CRM, automatischer Datenaustausch Telefonmarketing"
     );
-    ensureMeta("og:title", "Raginerus – Datendrehscheibe für Telefonmarketing", "property");
+    ensureMeta(
+      "og:title",
+      "Raginerus – Datendrehscheibe für Telefonmarketing",
+      "property"
+    );
     ensureMeta(
       "og:description",
-      "Serviceplattform für den strukturierten Datenaustausch zwischen Telefonmarketing-Unternehmen und Auftraggebern.",
+      "Serviceplattform für den strukturierten Datenaustausch von Leads und Abschlüssen im Telefonmarketing zwischen Marketing-Unternehmen und Auftraggebern.",
       "property"
     );
     ensureMeta("og:type", "website", "property");
-    ensureMeta("og:image", "https://raginerus.de/og-preview.png", "property");
-    ensureLink("canonical", "https://raginerus.de/");
+    ensureMeta("og:image", "https://raginerus.com/og-preview.png", "property");
+    ensureLink("canonical", "https://raginerus.com/");
 
     const existingSchema = document.getElementById("raginerus-schema");
     if (existingSchema) existingSchema.remove();
@@ -63,10 +66,10 @@ export default function RaginerusLandingPage() {
         {
           "@type": "Organization",
           name: "Raginerus",
-          url: "https://raginerus.de/",
-          email: "support@raginerus.com",
+          url: "https://raginerus.com/",
+          email: "raghinerus@gmail.com",
           telephone: "+49 1749320812",
-          logo: "https://raginerus.de/og-preview.png",
+          logo: "https://raginerus.com/og-preview.png",
           address: {
             "@type": "PostalAddress",
             streetAddress: "Leopold-Messmer-Weg 4a",
@@ -78,9 +81,9 @@ export default function RaginerusLandingPage() {
         {
           "@type": "WebSite",
           name: "Raginerus",
-          url: "https://raginerus.de/",
+          url: "https://raginerus.com/",
           description:
-            "Serviceplattform für den strukturierten Datenaustausch zwischen Telefonmarketing-Unternehmen und Auftraggebern.",
+            "Serviceplattform für den strukturierten Datenaustausch von Leads und Abschlüssen im Telefonmarketing zwischen Marketing-Unternehmen und Auftraggebern.",
         },
       ],
     });
@@ -97,7 +100,7 @@ export default function RaginerusLandingPage() {
   }, []);
 
   const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = event.target;
     const checked = "checked" in event.target ? event.target.checked : false;
@@ -108,7 +111,7 @@ export default function RaginerusLandingPage() {
     }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!formData.name || !formData.email || !formData.message || !formData.consent) {
@@ -118,21 +121,39 @@ export default function RaginerusLandingPage() {
       return;
     }
 
-    const subject = encodeURIComponent(
-      `Anfrage über Raginerus-Website von ${formData.name}`
-    );
-    const body = encodeURIComponent(
-      [
-        `Name: ${formData.name}`,
-        `Unternehmen: ${formData.company || "-"}`,
-        `E-Mail: ${formData.email}`,
-        "",
-        "Nachricht:",
-        formData.message,
-      ].join("\n")
-    );
-
-    window.location.href = `mailto:raghinerus@gmail.com?subject=${subject}&body=${body}`;
+    fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        access_key: "c6cfdcea-94d2-4578-bdf3-5d8df6c0edf6",
+        subject: `Anfrage über Raginerus-Website von ${formData.name}`,
+        from_name: formData.name,
+        email: formData.email,
+        company: formData.company || "-",
+        message: formData.message,
+      }),
+    })
+      .then(async (response) => {
+        const result = await response.json();
+        if (response.ok && result.success) {
+          window.alert("Vielen Dank. Ihre Nachricht wurde erfolgreich gesendet.");
+          setFormData({
+            name: "",
+            company: "",
+            email: "",
+            message: "",
+            consent: false,
+          });
+        } else {
+          window.alert("Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.");
+        }
+      })
+      .catch(() => {
+        window.alert("Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.");
+      });
   };
 
   const features = [
@@ -188,7 +209,13 @@ export default function RaginerusLandingPage() {
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
             <div className="flex items-center gap-3">
-              <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
                 <defs>
                   <linearGradient id="raginerusGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#06b6d4" />
@@ -204,7 +231,9 @@ export default function RaginerusLandingPage() {
                 <line x1="22" y1="18" x2="28" y2="18" stroke="#3b82f6" strokeWidth="1.5" />
               </svg>
               <div>
-                <div className="text-2xl font-extrabold tracking-[0.18em] text-slate-900">RAGINERUS</div>
+                <div className="text-2xl font-extrabold tracking-[0.18em] text-slate-900">
+                  RAGINERUS
+                </div>
                 <div className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-700">
                   BIDIREKTIONALER DATENAUSTAUSCH ALS SERVICE
                 </div>
@@ -212,19 +241,28 @@ export default function RaginerusLandingPage() {
             </div>
 
             <nav className="hidden items-center gap-8 text-base font-semibold text-slate-700 md:flex">
-              <a href="#start" className="transition hover:text-slate-900">Startseite</a>
-              <a href="#leistung" className="transition hover:text-slate-900">Leistung</a>
-              <a href="#kontakt" className="transition hover:text-slate-900">Kontakt</a>
+              <a href="#start" className="transition hover:text-slate-900">
+                Startseite
+              </a>
+              <a href="#leistung" className="transition hover:text-slate-900">
+                Leistung
+              </a>
+              <a href="#kontakt" className="transition hover:text-slate-900">
+                Kontakt
+              </a>
             </nav>
 
-            <a href="#kontakt" className="rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-cyan-600">
+            <a
+              href="#kontakt"
+              className="rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-cyan-600"
+            >
               Anfrage stellen
             </a>
           </div>
         </header>
 
         <main id="start" className="relative">
-          <section id="lead-transfer" className="mx-auto max-w-7xl px-6 pb-8 pt-10 lg:px-8">
+          <section id="lead-transfer" className="mx-auto max-w-7xl px-6 pb-8 lg:px-8">
             <div className="rounded-[2rem] border border-slate-200 bg-white p-8 lg:p-10">
               <h1 className="text-3xl font-semibold text-cyan-600 md:text-4xl">
                 Datendrehscheibe für das Telefonmarketing
@@ -260,9 +298,13 @@ export default function RaginerusLandingPage() {
               <div className="mb-6 flex items-center justify-between border-b border-slate-700 pb-4">
                 <div>
                   <div className="text-sm font-semibold text-white">Raginerus Systemarchitektur</div>
-                  <div className="text-xs uppercase tracking-[0.22em] text-slate-400">Bidirektionaler Datenaustausch</div>
+                  <div className="text-xs uppercase tracking-[0.22em] text-slate-400">
+                    Bidirektionaler Datenaustausch
+                  </div>
                 </div>
-                <div className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">aktiv</div>
+                <div className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">
+                  aktiv
+                </div>
               </div>
 
               <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[1fr_auto_1fr]">
@@ -270,7 +312,10 @@ export default function RaginerusLandingPage() {
                   <div className="text-sm font-semibold text-white">Telefonmarketing</div>
                   <div className="mt-3 flex flex-wrap justify-center gap-2">
                     {leftFlow.map((item) => (
-                      <span key={item} className="rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-xs text-blue-200">
+                      <span
+                        key={item}
+                        className="rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-xs text-blue-200"
+                      >
                         {item}
                       </span>
                     ))}
@@ -278,13 +323,24 @@ export default function RaginerusLandingPage() {
                 </div>
 
                 <div className="relative flex flex-col items-center gap-6 px-2">
-                  <div className="text-[11px] uppercase tracking-[0.2em] text-blue-300">Leads / Abschlüsse</div>
+                  <div className="text-[11px] uppercase tracking-[0.2em] text-blue-300">
+                    Leads / Abschlüsse
+                  </div>
 
                   <div className="absolute left-1/2 top-[1.1rem] hidden h-1 w-[calc(100%+12rem)] -translate-x-1/2 overflow-hidden bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent lg:block" />
                   <div className="absolute left-1/2 top-[1.1rem] hidden h-1 w-[calc(100%+12rem)] -translate-x-1/2 overflow-hidden lg:block">
-                    <span className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-cyan-300" style={{ animation: "flowRight 3s linear infinite" }} />
-                    <span className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-cyan-300" style={{ animation: "flowRight 3s linear infinite", animationDelay: "0.8s" }} />
-                    <span className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-cyan-300" style={{ animation: "flowRight 3s linear infinite", animationDelay: "1.6s" }} />
+                    <span
+                      className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-cyan-300"
+                      style={{ animation: "flowRight 3s linear infinite" }}
+                    />
+                    <span
+                      className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-cyan-300"
+                      style={{ animation: "flowRight 3s linear infinite", animationDelay: "0.8s" }}
+                    />
+                    <span
+                      className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-cyan-300"
+                      style={{ animation: "flowRight 3s linear infinite", animationDelay: "1.6s" }}
+                    />
                   </div>
 
                   <div className="rounded-[1.5rem] border border-cyan-400/30 bg-cyan-400/10 px-6 py-5 text-center">
@@ -293,13 +349,24 @@ export default function RaginerusLandingPage() {
                     <div className="text-xs text-slate-400">Mapping &amp; Datentransfer</div>
                   </div>
 
-                  <div className="text-[11px] uppercase tracking-[0.2em] text-emerald-300">Status / Ergebnisse</div>
+                  <div className="text-[11px] uppercase tracking-[0.2em] text-emerald-300">
+                    Status / Ergebnisse
+                  </div>
 
                   <div className="absolute left-1/2 bottom-[1.1rem] hidden h-1 w-[calc(100%+12rem)] -translate-x-1/2 overflow-hidden bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent lg:block" />
                   <div className="absolute left-1/2 bottom-[1.1rem] hidden h-1 w-[calc(100%+12rem)] -translate-x-1/2 overflow-hidden lg:block">
-                    <span className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-emerald-300" style={{ animation: "flowLeft 3s linear infinite" }} />
-                    <span className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-emerald-300" style={{ animation: "flowLeft 3s linear infinite", animationDelay: "0.8s" }} />
-                    <span className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-emerald-300" style={{ animation: "flowLeft 3s linear infinite", animationDelay: "1.6s" }} />
+                    <span
+                      className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-emerald-300"
+                      style={{ animation: "flowLeft 3s linear infinite" }}
+                    />
+                    <span
+                      className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-emerald-300"
+                      style={{ animation: "flowLeft 3s linear infinite", animationDelay: "0.8s" }}
+                    />
+                    <span
+                      className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-emerald-300"
+                      style={{ animation: "flowLeft 3s linear infinite", animationDelay: "1.6s" }}
+                    />
                   </div>
                 </div>
 
@@ -307,7 +374,10 @@ export default function RaginerusLandingPage() {
                   <div className="text-sm font-semibold text-white">Auftraggeber</div>
                   <div className="mt-3 flex flex-wrap justify-center gap-2">
                     {rightFlow.map((item) => (
-                      <span key={item} className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">
+                      <span
+                        key={item}
+                        className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200"
+                      >
                         {item}
                       </span>
                     ))}
@@ -325,7 +395,10 @@ export default function RaginerusLandingPage() {
 
             <div className="mt-12 w-full">
               {features.map((item) => (
-                <div key={item.title} className="w-full rounded-3xl border border-slate-200 bg-sky-50 p-6 shadow-2xl shadow-black/10">
+                <div
+                  key={item.title}
+                  className="w-full rounded-3xl border border-slate-200 bg-sky-50 p-6 shadow-2xl shadow-black/10"
+                >
                   <div className="mb-3 h-2 w-12 rounded-full bg-cyan-400/80" />
                   <h2 className="text-3xl font-semibold text-cyan-600">{item.title}</h2>
                   <p className="mt-2 text-lg leading-8 text-slate-700">{item.text}</p>
@@ -336,9 +409,11 @@ export default function RaginerusLandingPage() {
 
           <section id="leistung" className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
             <div className="rounded-[2rem] border border-slate-200 bg-sky-50 p-8 lg:p-10">
-              <div className="mb-6 text-sm uppercase tracking-[0.32em] text-cyan-600">Leistung</div>
+              <div className="mb-6 text-sm uppercase tracking-[0.32em] text-cyan-600">
+                Leistung
+              </div>
 
-              <div className="mt-2 grid gap-5 lg:grid-cols-3">
+              <div className="mt-2 grid gap-5 lg:grid-cols-3)">
                 {serviceCards.map((card) => (
                   <div key={card.title} className="rounded-3xl border border-slate-200 bg-white p-6">
                     <div className="mb-3 h-10 w-10 rounded-2xl border border-cyan-400/20 bg-cyan-400/10" />
@@ -354,9 +429,13 @@ export default function RaginerusLandingPage() {
 
                 <div className="rounded-[2rem] border border-slate-200 bg-white p-6">
                   <div className="text-sm uppercase tracking-[0.32em] text-cyan-600">Vorteile</div>
+
                   <div className="mt-6 grid gap-3">
                     {benefits.map((item) => (
-                      <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-base text-slate-700">
+                      <div
+                        key={item}
+                        className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-base text-slate-700"
+                      >
                         {item}
                       </div>
                     ))}
@@ -381,7 +460,10 @@ export default function RaginerusLandingPage() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="grid gap-4 rounded-[2rem] border border-slate-200 bg-white p-6">
+              <form
+                onSubmit={handleSubmit}
+                className="grid gap-4 rounded-[2rem] border border-slate-200 bg-white p-6"
+              >
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="grid gap-2 text-sm text-slate-700">
                     Name
@@ -456,7 +538,13 @@ export default function RaginerusLandingPage() {
 
             <div className="max-w-md rounded-2xl border border-slate-200 bg-slate-50 p-6">
               <div className="flex items-center gap-3">
-                <svg width="30" height="30" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 36 36"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
                   <defs>
                     <linearGradient id="raginerusGradImpressum" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor="#06b6d4" />
@@ -485,21 +573,15 @@ export default function RaginerusLandingPage() {
               <div className="mt-4 space-y-1">
                 <div>
                   E-Mail:{" "}
-                  <a href="mailto:raghinerus@gmail.com" className="underline decoration-slate-300 underline-offset-4 hover:text-cyan-600">
-                    support@raginerus.com
-                  </a>
+                  <span className="select-all">raghinerus@gmail.com</span>
                 </div>
                 <div>
                   Mobil:{" "}
-                  <a href="tel:+491749320812" className="underline decoration-slate-300 underline-offset-4 hover:text-cyan-600">
-                    +49 1749320812
-                  </a>
+                  <span className="select-all">+49 1749320812</span>
                 </div>
                 <div>
                   Telefon:{" "}
-                  <a href="tel:+497714808" className="underline decoration-slate-300 underline-offset-4 hover:text-cyan-600">
-                    +49 771 4808
-                  </a>
+                  <span className="select-all">+49 771 4808</span>
                 </div>
               </div>
             </div>
@@ -530,9 +612,15 @@ export default function RaginerusLandingPage() {
               <span className="font-semibold text-slate-900">Raginerus</span> · Digitaler Service für bidirektionalen Datenaustausch
             </div>
             <div className="flex gap-6">
-              <a href="#kontakt" className="hover:text-slate-900">Kontakt</a>
-              <a href="#impressum" className="hover:text-slate-900">Impressum</a>
-              <a href="#datenschutz" className="hover:text-slate-900">Datenschutz</a>
+              <a href="#kontakt" className="hover:text-slate-900">
+                Kontakt
+              </a>
+              <a href="#impressum" className="hover:text-slate-900">
+                Impressum
+              </a>
+              <a href="#datenschutz" className="hover:text-slate-900">
+                Datenschutz
+              </a>
             </div>
           </div>
         </footer>
