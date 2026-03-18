@@ -265,7 +265,9 @@ export default function RaginerusLandingPage() {
           <section id="lead-transfer" className="mx-auto max-w-7xl px-6 pb-8 lg:px-8">
             <div className="rounded-[2rem] border border-slate-200 bg-white p-8 lg:p-10">
               <h1 className="text-3xl font-semibold text-cyan-600 md:text-4xl">
-                Datendrehscheibe für das Telefonmarketing
+                <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">
+                  Raginerus ermöglicht den strukturierten Datenaustausch von Leads und Abschlüssen im Telefonmarketing. Marketingunternehmen übertragen Leads und Abschlüsse automatisiert an Auftraggeber und erhalten Status- und Ergebnisdaten strukturiert zurück. Die Plattform fungiert als zentrale Datendrehscheibe für Lead- und Abschlussdaten und verbindet Marketing-Systeme mit CRM-Systemen der Auftraggeber.
+                </p>
               </h1>
 
               <div className="mt-10 grid gap-8 md:grid-cols-3">
@@ -406,7 +408,15 @@ export default function RaginerusLandingPage() {
               ))}
             </div>
           </section>
-
+          <section className="mx-auto max-w-7xl px-6 py-6 lg:px-8">
+            <h2 className="text-2xl font-semibold text-slate-900">
+              Automatischer Datentransfer für Leads und Abschlüsse im Telefonmarketing
+            </h2>
+          
+            <p className="mt-4 text-base leading-7 text-slate-700">
+              Raginerus ist spezialisiert auf den automatisierten Datentransfer von Leads und Abschlüssen zwischen Telefonmarketing-Unternehmen und Auftraggebern. Unterschiedliche Datenformate werden über ein Mapping vereinheitlicht und zuverlässig übertragen. Gleichzeitig werden Status- und Ergebnisdaten strukturiert zurückgeführt. Dadurch entsteht ein durchgängiger, bidirektionaler Datenaustausch ohne manuelle Zwischenschritte.
+            </p>
+          </section>        
           <section id="leistung" className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
             <div className="rounded-[2rem] border border-slate-200 bg-sky-50 p-8 lg:p-10">
               <div className="mb-6 text-sm uppercase tracking-[0.32em] text-cyan-600">
